@@ -24,7 +24,7 @@
 # fail once a command invocation itself fails.
 set -e
 
-# This is the usage message, like it's done in 
+# This is the usage message, like it's done in
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP
@@ -57,7 +57,7 @@ fi
 # visible error messages.
 exec 3<&2
 
-# Simpe function for resolving a
+# Simple function for resolving a
 # relative path to an absolute one
 function realpath {
     local path="$1"
@@ -86,6 +86,7 @@ function realpath {
 # folders of php-build.
 PHP_BUILD_ROOT="$(realpath "$0")/.."
 TMP="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
+SRC_ROOT="${PHP_BUILD_ROOT}/src"
 
 # This file gets copied to `$PREFIX/etc/php.ini` once
 # the build is complete. This is by default the PHP tarball's
@@ -238,6 +239,22 @@ function download {
     "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
 }
 
+function download_from_github_checkout {
+    # before doing anything check for the presence of git
+    type git &>/dev/null || echo "error: please install git and try again" >&2
+    exit 1
+
+    local branch=$1
+    local repo=$2
+
+    if [ !-f "${SRC_ROOT}/.git" ]; then
+        git clone $repo
+    fi
+
+    log "Checking out ${branch} from ${repo}"
+    git checkout $branch
+}
+
 # Downloads a PHP Source Tarball from GitHub and extracts it
 # to `$TMP/source/$DEFINITION`.
 function download_from_github {
@@ -343,7 +360,7 @@ function build_package {
     local source_path=$1
     local cwd="$(pwd)"
     if [ -z $1 ]; then
-      local source_path="$TMP/source/$DEFINITION"
+        local source_path="$TMP/source/$DEFINITION"
     fi
 
     if [ ! -d "$PREFIX" ]; then
@@ -560,9 +577,9 @@ $CONFIGURE_OPTIONS"
     # systems.
     local append_default_libdir='yes'
     for option in $CONFIGURE_OPTIONS; do
-      case "$option" in
-        "--with-libdir"*) append_default_libdir='no' ;;
-      esac
+        case "$option" in
+            "--with-libdir"*) append_default_libdir='no' ;;
+        esac
     done
     if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ]; then
         argv="$argv --with-libdir=lib64"
@@ -588,7 +605,7 @@ $CONFIGURE_OPTIONS"
 ! INSTALL_IT = \$(mkinstalldirs) '$PREFIX/libexec/apache2' && \$(mkinstalldirs) '\$(INSTALL_ROOT)/private/etc/apache2' && /usr/sbin/apxs -S LIBEXECDIR='$PREFIX/libexec/apache2' -S SYSCONFDIR='\$(INSTALL_ROOT)/private/etc/apache2' -i -a -n php5 libs/libphp5.so
 EOF
 
-    cd "$backup_pwd"
+cd "$backup_pwd"
 }
 
 # Handles build errors, and displays the last 10 lines
@@ -770,4 +787,3 @@ log "Success" "Built $DEFINITION successfully."
 
 trap - SIGINT
 trap - SIGTERM
-
