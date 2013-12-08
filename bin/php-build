@@ -245,7 +245,7 @@ function download_from_github_checkout {
         local branch=$1
         local repo=$2
 
-        if [ !-f "${SRC_ROOT}/.git" ]; then
+        if [ ! -f "${SRC_ROOT}/.git" ]; then
             git clone $repo
         fi
 
