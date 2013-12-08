@@ -265,8 +265,8 @@ function download_from_github_checkout {
 # Downloads a PHP Source Tarball from GitHub and extracts it
 # to `$TMP/source/$DEFINITION`.
 function download_from_github {
-    local branch=$1
-    local repo=$2
+    local branch=$2
+    local repo=$1
     local package_file="$TMP/packages/$branch.tar.gz"
     local url="https://github.com/$repo/tarball/$branch"
     local temp_package="$TMP/$branch.tar.gz"
