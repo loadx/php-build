@@ -144,6 +144,10 @@ function init {
         mkdir "$TMP/source"
     fi
 
+    if [ ! -d "SRC_ROOT" ]; then
+        mkdir "$SRC_ROOT"
+    fi
+
     if [ ! -d "$PHP_BUILD_ROOT/share/php-build/before-install.d" ]; then
         mkdir -p "$PHP_BUILD_ROOT/share/php-build/before-install.d"
     fi
@@ -242,11 +246,11 @@ function download {
 function download_from_github_checkout {
     # before doing anything check for the presence of git
     if type git &>/dev/null; then
-        local branch=$1
-        local repo=$2
+        local branch=$2
+        local repo=$1
 
         if [ ! -f "${SRC_ROOT}/.git" ]; then
-            git clone $repo
+            git clone "https://github.com/$repo" $SRC_ROOT
         fi
 
         log "Checking out ${branch} from ${repo}"
