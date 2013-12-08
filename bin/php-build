@@ -253,6 +253,14 @@ function download_from_github_checkout {
 
     log "Checking out ${branch} from ${repo}"
     git checkout $branch
+
+    if [ -d "$TMP/source/$DEFINITION" ]; then
+        log "Removing" "Existing source for $DEFINITION"
+        rm -rf "$TMP/source/$DEFINITION"
+    fi
+
+    log "copying source from $SRC_ROOT to $TMP/source/$DEFINITION"
+    git checkout-index -a -f --prefix=$TMP/source/$DEFINITION
 }
 
 # Downloads a PHP Source Tarball from GitHub and extracts it
