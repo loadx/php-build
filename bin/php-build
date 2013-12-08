@@ -144,7 +144,7 @@ function init {
         mkdir "$TMP/source"
     fi
 
-    if [ ! -d "SRC_ROOT" ]; then
+    if [ ! -d "$SRC_ROOT" ]; then
         mkdir "$SRC_ROOT"
     fi
 
